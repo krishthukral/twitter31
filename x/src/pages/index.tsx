@@ -4,10 +4,21 @@ import Link from "next/link";
 
 import { api } from "~/utils/api";
 
+const CreatePostWizard = () => {
+  const {user} = useUser();
+  if(!user) return null;
+  return(
+    <div>
+      <img src={user.profileImageUrl} alt="Profile Image"/>
+    </div>
+  )
+}
 export default function Home() {
 
   const user = useUser();
-  const {data} = api.post.getAll.useQuery(); 
+  const {data, isLoading} = api.post.getAll.useQuery(); 
+  if (isLoading) return <div>Loading...</div>
+  if (!data) return <div>Something went wrong</div>
   return (
     <>
       <Head>
@@ -26,7 +37,7 @@ export default function Home() {
       {!!user.isSignedIn && <SignOutButton/>} 
       </div> 
       <div className= "flex flex-col">
-        {data?.map((post) => (
+        {[...data,...data]?.map((post) => (
         <div key={post.id} className="border-b border-slate-400 p-8">
           {post.content}
           </div>
